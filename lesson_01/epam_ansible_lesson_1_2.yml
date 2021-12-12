@@ -1,0 +1,24 @@
+---
+- name: Remove htppd
+  hosts: epam
+  become: yes
+  remote_user: ansible
+
+  tasks: 
+  - name: Remove Apache for Centos 8 
+    yum: name=httpd state=absent
+
+  - name: Remove index.html 
+    command: rm -rf  /var/www/html/index.html 
+
+  - name: Close 80 and 443 ports
+    firewalld: 
+      zone: public 
+      port: "{{ item }}/tcp"
+      permanent: yes 
+      state: disabled 
+    loop: 
+      - '80' 
+      - '443'
+  - name: restart firewall
+    command: service firewalld restart  

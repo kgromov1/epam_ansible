@@ -1,0 +1,13 @@
+---
+- name: Remove htppd
+  hosts: epam
+  become: yes
+  remote_user: ansible
+
+  tasks:
+  - name: Change grub-line
+    lineinfile:
+      path: /tmp/grub
+      insertafter: '^GRUB_CMDLINE_LINUX= '
+      line: 'net.ifnames=0 biosdevname='
+    

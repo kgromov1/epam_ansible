@@ -1,0 +1,48 @@
+---
+- name: Create new users  Lesson_02
+  hosts: epam
+  become: yes
+  remote_user: ansible
+  gather_facts: no 
+
+  vars:
+    user_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32613136393639313334313765336162316438663661353235376466383663356664353564326464
+          6262313864636335396566616162306633333861356461620a646131333233383032646230666634
+          66343963326532386338363866643033666135643163626133643938393339653938303538313233
+          3732383430313538320a393038623335663737353562393034303063303935653430653866323765
+          3162
+ 
+
+  tasks: 
+  - name: Create group
+    group: 
+      name: epam_users
+      state: present
+
+
+  - name: Add new user 
+    ansible.builtin.user:
+      name: "{{ item }}"
+      state: present
+      create_home: yes
+      comment: "{{ item }}@example.com"
+      group: epam_users 
+      password: "{{ user_pass }}"
+
+
+    loop: 
+      - Alice
+      - Bob 
+      - Carol
+
+#  - name: Remove added users
+#    ansible.builtin.user:
+#      name: "{{ item }}"
+#      state: absent
+#      remove: yes 
+#    loop:
+#      - Alice
+#      - Bob
+#      - Carol

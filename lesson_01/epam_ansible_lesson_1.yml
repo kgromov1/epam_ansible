@@ -1,0 +1,32 @@
+---
+- name: Install httpd
+  hosts: epam
+  become: yes
+  remote_user: ansible
+
+  tasks: 
+  - name: Install Apache for Centos 8 
+    yum: name=httpd state=latest
+
+  - name: Up Apache for Centos 8 
+    service: name=httpd state=started enabled=yes  
+
+  - name : Check UP Apache
+    shell: service httpd status | grep -i active 
+    register: stdout_lines
+  - debug: var=stdout_lines
+
+  - name: Create index.html and added welcome
+    shell: echo Welcome to my web server > /var/www/html/index.html 
+
+  - name: Open 80 and 443 ports
+    firewalld: 
+      zone: public 
+      port: "{{ item }}/tcp"
+      permanent: yes 
+      state: enabled
+    loop: 
+      - '80' 
+      - '443'
+  - name: restart firewall
+    command: service firewalld restart  
