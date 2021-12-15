@@ -7,7 +7,15 @@
   tasks:
   - name: Change grub-line
     lineinfile:
-      path: /tmp/grub
-      insertafter: '^GRUB_CMDLINE_LINUX= '
-      line: 'net.ifnames=0 biosdevname='
-    
+      state: present
+      dest: /tmp/grub
+      backup: yes
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.*  )\"[^\"]+)(\".*)'
+      line: '\1 {{ item  }}\2'
+    loop:
+      - 'net.ifnames=0'
+      - 'biosdevname=0'  
+
+  - name: Update Grub 
+    shell: grub2-mkconfig -o /boot/grub2/grub.cfg 
