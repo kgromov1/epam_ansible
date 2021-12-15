@@ -1,0 +1,52 @@
+---
+# tasks file for deploy_vsftpd
+- name: Install vsftpd 
+  yum: name=vsftpd state=latest  
+
+- name: UP vsftpd 
+  service: name=vsftpd state=started enabled=yes
+
+- name: Install Firewalld 
+  yum: name=firewalld state=latest
+
+- name: UP Firewalld 
+  service: name=firewalld state=started enabled=yes
+
+- name: Allow vsftpd 
+  firewalld: 
+    zone: public
+    service: "{{ item }}"
+    permanent: yes 
+    state: enabled 
+  loop: 
+    - 'ftp'
+    - 'telnet'
+  notify:
+    - restart firewalld 
+
+- name: Create folder /var/ftp/pub 
+  file: 
+    path: /var/ftp/pub 
+    state: directory 
+    mode: 0755 
+
+- name: Change config vsftp 
+  lineinfile: 
+    dest: /etc/vsftpd/vsftpd.conf
+    backup: yes
+    backrefs: yes
+    state: present 
+    regexp: "{{ item.regexp }}" 
+    line: "{{ item.line }}"
+  with_items: 
+    - { regexp: anonymous_enable=NO, line: anonymous_enable=YES }
+    - { regexp: local_enable=YES, line: local_enable=NO } 
+    - { regexp: \#anon_upload_enable=YES, line: anon_upload_enable=YES } 
+    - { regexp: , line: anon_mkdir_write_enable=YES }
+
+- name: Restart vsftpd 
+  service: name=vsftpd state=restarted enabled=yes
+    
+
+  
+ 

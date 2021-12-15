@@ -1,0 +1,9 @@
+---
+- name: Role from deploy Apache  
+  hosts: epam
+  become: yes
+  remote_user: ansible
+
+  roles: 
+    - epam_apache
+

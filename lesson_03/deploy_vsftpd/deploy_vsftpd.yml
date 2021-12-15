@@ -1,0 +1,9 @@
+---
+- name: Role from deploy VSftpd  
+  hosts: epam
+  become: yes
+  remote_user: ansible
+
+  roles: 
+    - deploy_vsftpd
+

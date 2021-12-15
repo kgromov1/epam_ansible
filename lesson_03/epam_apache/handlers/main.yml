@@ -1,0 +1,4 @@
+---
+# handlers file for deploy_apache
+- name: open ports 
+  service: name=firewalld state=restarted
