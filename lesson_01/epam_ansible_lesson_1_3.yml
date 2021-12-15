@@ -8,7 +8,7 @@
   - name: Change grub-line
     lineinfile:
       state: present
-      dest: /tmp/grub
+      dest: /etc/default/grub
       backup: yes
       backrefs: yes
       regexp: '^(GRUB_CMDLINE_LINUX=(?!.*  )\"[^\"]+)(\".*)'
